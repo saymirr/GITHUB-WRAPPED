@@ -1,0 +1,17 @@
+{
+  "name": "github-wrapped",
+  "version": "0.1.0",
+  "description": "Generate a shareable 'Wrapped' PNG card of anyone's GitHub contributions for a month.",
+  "type": "module",
+  "bin": { "github-wrapped": "wrapped.mjs" },
+  "scripts": {
+    "start": "node wrapped.mjs",
+    "test": "node --test",
+    "sample": "node scripts/render-sample.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}
