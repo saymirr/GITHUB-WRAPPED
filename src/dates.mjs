@@ -58,3 +58,9 @@ export function shortDate(date) {
   const { month } = parseMonth(monthOf(date));
   return `${MONTH_NAMES[month - 1].slice(0, 3)} ${Number(date.slice(8, 10))}`;
 }
+
+/** The month before the one containing `date` ('YYYY-MM-DD'), as 'YYYY-MM'. */
+export function previousMonth(date) {
+  const { year, month } = parseMonth(monthOf(date));
+  return month === 1 ? `${year - 1}-12` : `${year}-${pad(month - 1)}`;
+}

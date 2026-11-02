@@ -59,7 +59,7 @@ Make your first card:
 node wrapped.mjs
 ```
 
-That makes a picture of **your** contributions this month and saves it in the same folder as `wrapped-<your-username>-<YYYY-MM>.png`. Open it like any image.
+It asks two questions. Press **Enter** at the first to use your own account, and type `last` at the second for last month (or press Enter for this month, or type a month like `2026-09`). It then saves a picture in the same folder as `wrapped-<username>-<YYYY-MM>.png` and opens it.
 
 Every command must be run **inside the `GITHUB-WRAPPED` folder** (after the `cd` step). If you open a new terminal later, `cd` back into it first.
 
@@ -69,9 +69,12 @@ Replace the parts in `<angle brackets>` with your own values (without the bracke
 
 | I want... | Command |
 |---|---|
-| my card for this month | `node wrapped.mjs` |
-| someone else's card | `node wrapped.mjs <username>` |
+| to be asked what to do | `node wrapped.mjs` |
+| someone's card for this month | `node wrapped.mjs <username>` |
+| last month | `node wrapped.mjs <username> --last` |
 | a specific month | `node wrapped.mjs <username> <YYYY-MM>` |
+
+Leave the username out to use your own account, for example `node wrapped.mjs --last`.
 
 For example, `node wrapped.mjs octocat 2026-09` makes September 2026 for the user `octocat`. The username always comes first, then the month.
 
@@ -79,6 +82,7 @@ Optional extras go at the end:
 
 | Option | What it does |
 |---|---|
+| `--last` | Use last month instead of typing a `YYYY-MM` |
 | `-o, --out <file>` | Choose the output file name |
 | `--public-only` | Hide private repos, even on your own card (use this before posting it) |
 | `--scale <1-4>` | Sharper image; `2` gives 2400×1350 (default `1`) |
