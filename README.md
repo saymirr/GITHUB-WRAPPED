@@ -15,45 +15,78 @@ Turn one month of anyone's GitHub activity into a shareable, Twitter/X-sized PNG
 - **A tagline** picked by simple rules from the stats ("31/31 days. no days off.", "weekends are for shipping."). No AI, no network. See [`src/tagline.mjs`](src/tagline.mjs).
 - **Footer**: avatar, `@username`, month, and a watermark you can change.
 
-## Requirements
+## Quick start
 
-- Node.js 20+
-- GitHub credentials, either of:
-  - the [GitHub CLI](https://cli.github.com/) logged in (`gh auth login`), **or**
-  - a `GITHUB_TOKEN` environment variable (used only if `gh` isn't installed)
-- Chromium for Playwright (the card is HTML, screenshotted headlessly)
+You need three free tools first. Install each one, then **close and reopen your terminal** (on Windows: Command Prompt or PowerShell).
 
-## Install
+1. **Node.js 20 or newer**: [nodejs.org](https://nodejs.org/) (download the LTS version). Check with `node -v`.
+2. **Git**: [git-scm.com](https://git-scm.com/downloads). Or skip it and use **Code → Download ZIP** on the GitHub page, then unzip.
+3. **GitHub CLI**: [cli.github.com](https://cli.github.com/). This is how the tool is allowed to read GitHub data.
 
-```sh
-git clone <this repo> github-wrapped && cd github-wrapped
-npm install
-npx playwright install chromium   # one-time download
+Then run these one at a time. Type or paste **only the command itself**, nothing after it.
+
+Download the project and go into its folder:
+
 ```
+git clone https://github.com/saymirr/GITHUB-WRAPPED
+```
+
+```
+cd GITHUB-WRAPPED
+```
+
+Install it (this also takes a minute):
+
+```
+npm install
+```
+
+Download the browser it uses to draw the card (one time, about 150 MB):
+
+```
+npx playwright install chromium
+```
+
+Log in to GitHub (follow the prompts; pick "GitHub.com" and "Login with a web browser"):
+
+```
+gh auth login
+```
+
+Make your first card:
+
+```
+node wrapped.mjs
+```
+
+That makes a picture of **your** contributions this month and saves it in the same folder as `wrapped-<your-username>-<YYYY-MM>.png`. Open it like any image.
+
+Every command must be run **inside the `GITHUB-WRAPPED` folder** (after the `cd` step). If you open a new terminal later, `cd` back into it first.
 
 ## Usage
 
-```sh
-node wrapped.mjs [username] [YYYY-MM] [options]
-```
+Replace the parts in `<angle brackets>` with your own values (without the brackets).
 
-```sh
-node wrapped.mjs                      # you, this month
-node wrapped.mjs torvalds             # someone else, this month
-node wrapped.mjs torvalds 2026-09     # a specific month
-node wrapped.mjs me 2026-09 --public-only --scale 2
-```
-
-The result is saved as `wrapped-<username>-<YYYY-MM>.png` in the current directory.
-
-| Option | |
+| I want... | Command |
 |---|---|
-| `-o, --out <file>` | Output path |
-| `--public-only` | Hide private repos even on your own card |
-| `--scale <1-4>` | Pixel density; `2` gives a 2400×1350 image (default `1`) |
-| `-h, --help` | Usage |
+| my card for this month | `node wrapped.mjs` |
+| someone else's card | `node wrapped.mjs <username>` |
+| a specific month | `node wrapped.mjs <username> <YYYY-MM>` |
 
-The username always comes first. The current month is shown as "so far" until it ends.
+For example, `node wrapped.mjs octocat 2026-09` makes September 2026 for the user `octocat`. The username always comes first, then the month.
+
+Optional extras go at the end:
+
+| Option | What it does |
+|---|---|
+| `-o, --out <file>` | Choose the output file name |
+| `--public-only` | Hide private repos, even on your own card (use this before posting it) |
+| `--scale <1-4>` | Sharper image; `2` gives 2400×1350 (default `1`) |
+| `-h, --help` | Show the built-in help |
+
+The current month is labelled "so far" until it ends.
+
+> **No `gh`?** Instead of `gh auth login` you can set a `GITHUB_TOKEN` environment variable with a GitHub personal access token. The tool uses it only when `gh` isn't installed.
 
 ## Privacy and tokens
 
@@ -85,11 +118,9 @@ A web version would call `fetchMonthData()` with its own `run(query, variables)`
 
 ## Development
 
-```sh
-npm test            # unit tests; no network or token needed
-npm run sample      # regenerate docs/example.png from synthetic data
-node scripts/render-sample.mjs --all out/   # every edge-case layout, for eyeballing
-```
+- `npm test` runs the unit tests (no network or token needed).
+- `npm run sample` regenerates `docs/example.png` from synthetic data.
+- `node scripts/render-sample.mjs --all out/` renders every edge-case layout so you can eyeball them.
 
 The tests cover stats, tagline rules, HTML escaping, the privacy filter, and the `gh`/`fetch` transport (against a fake `gh`).
 
@@ -103,6 +134,10 @@ The tests cover stats, tagline rules, HTML escaping, the privacy filter, and the
 
 | Message | Fix |
 |---|---|
+| `'node' is not recognized` / `command not found: node` | Install Node.js, then close and reopen the terminal |
+| `'gh' is not recognized` / `command not found: gh` | Install the GitHub CLI, then close and reopen the terminal |
+| `Invalid installation targets: '#', ...` | You pasted a comment after the command. Run just `npx playwright install chromium` |
+| `Could not read package.json` / Playwright says "without first installing your project's dependencies" | You're not in the project folder. Run `cd GITHUB-WRAPPED`, then `npm install` |
 | `Chromium is not installed for Playwright` | `npx playwright install chromium` |
 | `GitHub rejected the credentials` / `No GitHub credentials found` | `gh auth login`, or set `GITHUB_TOKEN` |
 | `GitHub API rate limit reached` | Wait and retry; limits reset hourly |
