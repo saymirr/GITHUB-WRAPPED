@@ -92,6 +92,55 @@ The current month is labelled "so far" until it ends.
 
 > **No `gh`?** Instead of `gh auth login` you can set a `GITHUB_TOKEN` environment variable with a GitHub personal access token. The tool uses it only when `gh` isn't installed.
 
+## Share your card
+
+Attach the PNG to a post (it is sized for X/Twitter) and use one of these as a starting point. Replace the `[brackets]` with numbers from your own card.
+
+**Simple**
+
+```
+My [Month] on GitHub 🟩
+
+[N] contributions · [N]-day streak · [N]/[days] days active
+
+Make yours: https://github.com/saymirr/GITHUB-WRAPPED
+```
+
+**Using the tagline**
+
+```
+"[tagline from your card]"
+
+That was my [Month] on GitHub. Best day: [N] contributions on [date].
+
+Generate yours (free, runs on your machine): https://github.com/saymirr/GITHUB-WRAPPED
+```
+
+**Shipped**
+
+```
+Shipped [N] PRs in [Month]. Top one: "[PR title]"
+
+Made with GitHub Wrapped 🟩
+https://github.com/saymirr/GITHUB-WRAPPED
+```
+
+**Challenge**
+
+```
+GitHub Wrapped, but monthly.
+
+Mine: [N] contributions, [N] active days. What's yours?
+
+https://github.com/saymirr/GITHUB-WRAPPED
+```
+
+Before posting, remember that your own card shows private repo and PR names. Use `--public-only` to hide them:
+
+```
+node wrapped.mjs --last --public-only
+```
+
 ## Privacy and tokens
 
 - **Your token is never logged, printed, or written to disk.** With `gh`, the token is handled entirely by the GitHub CLI. In the `GITHUB_TOKEN` fallback it is sent only as an `Authorization` header to `api.github.com`, and error messages never include it.
