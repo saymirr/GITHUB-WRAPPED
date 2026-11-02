@@ -1,0 +1,8 @@
+node_modules/
+# generated cards (docs/example.png is kept)
+wrapped-*.png
+# secrets / local config: never commit tokens
+.env
+.env.*
+*.log
+.DS_Store
