@@ -4,23 +4,28 @@
 
 import { parseArgs } from 'node:util';
 import { config } from './src/config.mjs';
-import { localDate, parseMonth } from './src/dates.mjs';
+import { resolveRequest } from './src/cli.mjs';
+import { localDate } from './src/dates.mjs';
 import { WrappedError } from './src/errors.mjs';
 import { loadFontCss } from './src/fonts.mjs';
 import { createRunner, fetchAvatarDataUri, fetchMonthData } from './src/github.mjs';
 import { renderCardHtml } from './src/html.mjs';
+import { openFile } from './src/open.mjs';
 import { renderPng } from './src/png.mjs';
+import { askForRequest } from './src/prompt.mjs';
 import { computeStats } from './src/stats.mjs';
 
 const USAGE = `GitHub Wrapped: a shareable PNG card of a month of GitHub contributions.
 
 Usage:
+  node wrapped.mjs                      ask for a username and month
   node wrapped.mjs [username] [YYYY-MM] [options]
 
   username   GitHub login (default: the authenticated gh user)
   YYYY-MM    month to summarize (default: the current month)
 
 Options:
+      --last         use last month (instead of a YYYY-MM)
   -o, --out <file>   output path (default: wrapped-<username>-<YYYY-MM>.png)
       --public-only  hide private repos even on your own card
       --scale <n>    pixel density, e.g. 2 for a 2400x1350 image (default: 1)
@@ -33,6 +38,7 @@ async function main() {
     allowPositionals: true,
     options: {
       out: { type: 'string', short: 'o' },
+      last: { type: 'boolean', default: false },
       'public-only': { type: 'boolean', default: false },
       scale: { type: 'string', default: '1' },
       help: { type: 'boolean', short: 'h', default: false },
@@ -45,9 +51,11 @@ async function main() {
   if (!(scale >= 1 && scale <= 4)) throw new WrappedError('--scale must be between 1 and 4.', { code: 'USAGE' });
 
   const today = localDate();
-  const [username = undefined, monthArg] = positionals.map((p) => p || undefined); // '' = not given
-  const month = monthArg ?? today.slice(0, 7);
-  parseMonth(month); // validate early, before any network call
+  // With no arguments in an interactive terminal, ask instead of guessing.
+  const interactive = positionals.length === 0 && !values.last && process.stdin.isTTY && process.stdout.isTTY;
+  const { username, month } = interactive
+    ? await askForRequest({ today })
+    : resolveRequest({ positionals, last: values.last, today });
 
   const data = await fetchMonthData({
     run: createRunner(),
@@ -65,6 +73,7 @@ async function main() {
   const outPath = values.out ?? `wrapped-${data.username}-${month}.png`;
   await renderPng(html, outPath, { ...config.card, scale });
   console.log(outPath);
+  if (interactive) openFile(outPath);
 }
 
 main().catch((err) => {
